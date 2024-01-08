@@ -1,3 +1,4 @@
+"use client"
 import React, { startTransition, useEffect, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select"
 import { ICategory } from '@/lib/database/models/category.model'
@@ -14,6 +15,8 @@ type Props = {
 const Dropdown = ({ value, onChangeHandler }: Props) => {
     const [categories, setCategories] = useState<ICategory[]>([])
     const [newCategory, setNewCategory] = useState('')
+    const [dialogOpen, setDialogOpen] = useState(false)
+    const [selectOpen, setSelectOpen] = useState(false)
 
     const handleAddCategory = () => {
         createCategory({
@@ -37,7 +40,7 @@ const Dropdown = ({ value, onChangeHandler }: Props) => {
 
 
     return (
-        <Select onValueChange={onChangeHandler} defaultValue={value}>
+        <Select open={selectOpen && !dialogOpen} onOpenChange={setSelectOpen} onValueChange={onChangeHandler} defaultValue={value}>
             <SelectTrigger className="select-field">
                 <SelectValue placeholder="Category" />
             </SelectTrigger>
@@ -47,8 +50,11 @@ const Dropdown = ({ value, onChangeHandler }: Props) => {
                         {category.name}
                     </SelectItem>
                 ))}
-                
-                <AlertDialog>
+                <AlertDialog open={dialogOpen} onOpenChange={(open) => {
+                    setSelectOpen(!open)
+                    setDialogOpen(open)
+
+                }}>
                     <AlertDialogTrigger className='p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-50 focus:text-primary-500'>Add new category</AlertDialogTrigger>
                     <AlertDialogContent className='bg-white'>
                         <AlertDialogHeader>
@@ -64,7 +70,8 @@ const Dropdown = ({ value, onChangeHandler }: Props) => {
                     </AlertDialogContent>
                 </AlertDialog>
             </SelectContent>
-        </Select>
+        </Select >
+
     )
 }
 
